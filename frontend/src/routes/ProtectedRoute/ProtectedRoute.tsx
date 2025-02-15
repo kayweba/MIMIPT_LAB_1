@@ -1,15 +1,15 @@
-import { ReactNode } from "react"
+import { ReactNode, useContext } from "react"
 import { Navigate } from "react-router-dom"
-import { useAuth } from "../../hooks/useAuth"
+import { AuthContext } from "../../context/AuthContext"
 
 type Props = {
   children: ReactNode
 }
 
 export function ProtectedRoute({ children }: Props) {
-  const { user } = useAuth()
+  const { isAuth } = useContext(AuthContext)
 
-  if (!user) {
+  if (!isAuth) {
     return <Navigate to={'/login'} />
   }
 

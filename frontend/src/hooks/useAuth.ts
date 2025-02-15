@@ -1,11 +1,8 @@
-import { useMemo } from "react"
+import { useState } from "react"
 
 export const useAuth = () => {
-  const user = useMemo(() => {
-    return sessionStorage.getItem('user')
-  }, [])
+  // we can re export the user methods or object from this hook
+  const [isAuth, setIsAuth] = useState<boolean>(false)
 
-  return {
-    user,
-  }
-}
+  return { isAuth, setIsAuth }
+};
