@@ -14,12 +14,15 @@ from models import ToDo as TodoModel
 # Create the database
 Base.metadata.create_all(engine)
 
-app = FastAPI()
-
 methods = ["GET", "POST", "PUT", "DELETE"]
 origins = [
     "http://localhost:5173",
 ]
+
+
+security = HTTPBasic()
+
+app = FastAPI(dependencies=[Depends(security)])
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -27,10 +30,6 @@ app.add_middleware(
     allow_methods=methods,
     allow_headers=["*"],
 )
-
-security = HTTPBasic()
-
-
 def get_session():
     session = SessionLocal()
     try:
