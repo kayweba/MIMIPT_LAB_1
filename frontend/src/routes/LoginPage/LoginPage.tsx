@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import cls from './LoginPage.module.scss';
@@ -7,20 +7,24 @@ import { AuthContext } from '../../context/AuthContext';
 
 export function LoginPage() {
   const navigate = useNavigate();
+  const [username, setUsername] = useState<string>('')
+  const [password, setPassword] = useState<string>('')
 
-  const { setIsAuth } = useContext(AuthContext);
+  const { setUserData } = useContext(AuthContext);
 
   const authHandle = async () => {
-    const authStatus = await authService.auth('', '');
+    const authStatus = await authService.auth(username, password);
 
     if (authStatus === 200) {
-      setIsAuth(true);
+      setUserData({ username, password });
       navigate('/');
     }
   };
 
   return (
     <div className={cls.wrapper}>
+      <input type="text" value={username} onChange={(event) => setUsername(event.currentTarget.value)} />
+      <input type="password" value={password} onChange={(event) => setPassword(event.currentTarget.value)} />
       <button onClick={authHandle}>Запросить авторизацию</button>
     </div>
   );

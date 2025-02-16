@@ -19,39 +19,20 @@ origins = [
     "http://localhost:5173",
 ]
 
-
 security = HTTPBasic()
 
-app = FastAPI(dependencies=[Depends(security)])
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=methods,
-    allow_headers=["*"],
-)
-def get_session():
-    session = SessionLocal()
-    try:
-        yield session
-    finally:
-        session.close()
 
-
-def get_current_username(
-        credentials: Annotated[HTTPBasicCredentials, Depends(security)],
-):
+def check_is_auth(credentials: Annotated[HTTPBasicCredentials, Depends(security)]):
     current_username_bytes = credentials.username.encode("utf8")
-    correct_username_bytes = b"stanleyjobson"
+    correct_username_bytes = b"user"
     is_correct_username = secrets.compare_digest(
         current_username_bytes, correct_username_bytes
     )
     current_password_bytes = credentials.password.encode("utf8")
-    correct_password_bytes = b"swordfish"
+    correct_password_bytes = b"123"
     is_correct_password = secrets.compare_digest(
         current_password_bytes, correct_password_bytes
     )
-    print(credentials.username)
     if not (is_correct_username and is_correct_password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -62,18 +43,37 @@ def get_current_username(
     return credentials.username
 
 
+app = FastAPI(dependencies=[Depends(check_is_auth)])
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=methods,
+    allow_headers=["*"],
+)
+
+
+def get_session():
+    session = SessionLocal()
+    try:
+        yield session
+    finally:
+        session.close()
+
+
 @app.get("/auth")
-def read_current_user(username: Annotated[str, Depends(get_current_username)]) -> JSONResponse:
+def read_current_user() -> JSONResponse:
     response = JSONResponse(
-        content={"username": username},
+        content={'isAuth': True},
         headers={
             "WWW-Authenticate": "Basic",
             "Content-Type": "application/json",
             "Cache-Control": "no-store,no-cache, must-revalidate, post-check=0, pre-check=0",
         }
     )
-    print('HELLO WORLD')
     return response
+
 
 @app.get("/")
 def root():

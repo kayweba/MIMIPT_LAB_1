@@ -1,60 +1,52 @@
 
 import { BASE_URL, Routes } from "../constants/urls"
-import { getAuthHeader } from "./utils/authUtils"
+import { UserData } from "../models/UserData"
+import { getRequestParams } from './utils/authUtils'
 
 export class TodosService {
-  public async getAll() {
-    const response = await fetch(`${BASE_URL}${Routes.TODOS}`, {
-      headers: {
-        ...getAuthHeader('', ''),
-        'Content-Type': 'application/json',
-      },
-      mode: 'cors',
+  public async getAll(userData: UserData | null) {
+    const requestParams = getRequestParams({
+      username: userData?.username ?? '',
+      password: userData?.password ?? '',
       method: 'GET',
-      credentials: 'include',
     })
+
+    const response = await fetch(`${BASE_URL}${Routes.TODOS}`, requestParams)
     return response
   }
 
-  public async addTodo(text: string) {
-    const response = await fetch(`${BASE_URL}/todo`, {
-      headers: {
-        ...getAuthHeader('', ''),
-        'Content-Type': 'application/json',
-      },
-      mode: 'cors',
+  public async addTodo(userData: UserData | null, text: string) {
+    const requestParams = getRequestParams({
+      username: userData?.username ?? '',
+      password: userData?.password ?? '',
       method: 'POST',
-      credentials: 'include',
       body: JSON.stringify({ task: text })
     })
+
+    const response = await fetch(`${BASE_URL}/todo`, requestParams)
     return response
   }
 
-  public async removeTodo(id: number) {
-    const response = await fetch(`${BASE_URL}/todo/${id}`, {
-      headers: {
-        ...getAuthHeader('', ''),
-        'Content-Type': 'application/json',
-      },
-      mode: 'cors',
+  public async removeTodo(userData: UserData | null, id: number) {
+    const requestParams = getRequestParams({
+      username: userData?.username ?? '',
+      password: userData?.password ?? '',
       method: 'DELETE',
-      credentials: 'include',
-      // body: JSON.stringify({ task: text })
     })
+
+    const response = await fetch(`${BASE_URL}/todo/${id}`, requestParams)
     return response
   }
 
-  public async updateTodo(id: number, text: string) {
-    const response = await fetch(`${BASE_URL}/todo/${id}?task=${text}`, {
-      headers: {
-        ...getAuthHeader('', ''),
-        'Content-Type': 'application/json',
-      },
-      mode: 'cors',
+  public async updateTodo(userData: UserData | null, id: number, text: string) {
+    const requestParams = getRequestParams({
+      username: userData?.username ?? '',
+      password: userData?.password ?? '',
       method: 'PUT',
-      credentials: 'include',
-      body: JSON.stringify({ task: text })
+      body: JSON.stringify({ task: text }),
     })
+
+    const response = await fetch(`${BASE_URL}/todo/${id}?task=${text}`, requestParams)
     return response
   }
 }

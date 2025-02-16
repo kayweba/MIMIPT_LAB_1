@@ -7,9 +7,9 @@ type Props = {
 }
 
 export function ProtectedRoute({ children }: Props) {
-  const { isAuth } = useContext(AuthContext)
+  const { userData } = useContext(AuthContext)
 
-  if (!isAuth) {
+  if (!userData) {
     return <Navigate to={'/login'} />
   }
 

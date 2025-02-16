@@ -19,11 +19,11 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
-  const { isAuth, setIsAuth } = useAuth();
+  const { userData, setUserData } = useAuth();
 
   return (
     <>
-      <AuthContext.Provider value={{ isAuth, setIsAuth }}>
+      <AuthContext.Provider value={{ userData, setUserData }}>
         <RouterProvider router={router} />
       </AuthContext.Provider>
     </>
