@@ -6,12 +6,14 @@ import { AuthContext } from '../../context/AuthContext';
 
 export function MainPage() {
   const [todos, setTodos] = useState<Todos>([]);
-  const [newTodoValue, setNewTodoValue] = useState<string>();
+  const [newTodoValue, setNewTodoValue] = useState<string>('');
   const { userData } = useContext(AuthContext);
+  const [cacheControlValue, setCacheControlValue] = useState<string | null>(null)
 
   useEffect(() => {
     const makeRequest = async () => {
       const res = await todosService.getAll(userData);
+      setCacheControlValue(res.headers.get('Cache-Control'))
       setTodos(await res.json());
     };
     makeRequest();
@@ -23,6 +25,7 @@ export function MainPage() {
       const json = (await res.json()) as TodoItem;
       const updatedTodos = [...todos, { id: json.id, task: json.task }];
       setTodos(updatedTodos);
+      setNewTodoValue('')
     }
   };
 
@@ -57,8 +60,10 @@ export function MainPage() {
   return (
     <div className={cls.todosContainer}>
       <div>
+      <p>Cache-Control: {cacheControlValue}</p>
         <div className={cls.addTodoWrapper}>
           <input
+            value={newTodoValue}
             onChange={(event) => setNewTodoValue(event.currentTarget.value)}
             placeholder="Введите todo-шку"
           />

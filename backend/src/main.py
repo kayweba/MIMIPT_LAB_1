@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from typing import List
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from starlette.middleware.base import BaseHTTPMiddleware
 
 from database import Base, engine, SessionLocal
 from schemas import ToDo, ToDoCreate
@@ -20,6 +21,13 @@ origins = [
 ]
 
 security = HTTPBasic()
+
+
+class HeadersMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request, call_next):
+        response = await call_next(request)
+        response.headers["Cache-Control"] = "no-cache, no-store, max-age=0"
+        return response
 
 
 def check_is_auth(credentials: Annotated[HTTPBasicCredentials, Depends(security)]):
@@ -52,6 +60,7 @@ app.add_middleware(
     allow_methods=methods,
     allow_headers=["*"],
 )
+app.add_middleware(HeadersMiddleware)
 
 
 def get_session():

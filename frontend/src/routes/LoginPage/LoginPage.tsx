@@ -23,9 +23,9 @@ export function LoginPage() {
 
   return (
     <div className={cls.wrapper}>
-      <input type="text" value={username} onChange={(event) => setUsername(event.currentTarget.value)} />
-      <input type="password" value={password} onChange={(event) => setPassword(event.currentTarget.value)} />
-      <button onClick={authHandle}>Запросить авторизацию</button>
+      <input placeholder={'Логин'} type="text" value={username} onChange={(event) => setUsername(event.currentTarget.value)} />
+      <input placeholder={'Пароль'} type="password" value={password} onChange={(event) => setPassword(event.currentTarget.value)} />
+      <button onClick={authHandle}>Войти</button>
     </div>
   );
 }
